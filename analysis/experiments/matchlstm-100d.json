@@ -1,0 +1,87 @@
+{
+    "dataset_reader": {
+        "type": "scitail_graph",
+        "token_indexers": {
+            "tokens": {
+                "type": "single_id",
+                "lowercase_tokens": true
+            }
+        },
+        "tokenizer": {
+            "start_tokens": [
+                "<START>"
+            ],
+            "end_tokens": [
+                "<END>"
+            ]
+        }
+    },
+    "train_data_path": "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_train_conceptnet_entities.tsv",
+    "validation_data_path": "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_dev_conceptnet_entities.tsv",
+    "model": {
+        "type": "match_lstm",
+        "text_field_embedder": {
+            "tokens": {
+                "type": "embedding",
+                "pretrained_file": "../datasets/glove.6B.100d.txt.gz",
+                "embedding_dim": 100,
+                "trainable": false
+            }
+        },
+        "encoder": {
+            "type": "gru",
+            "input_size": 100,
+            "hidden_size": 100,
+            "num_layers": 1,
+            "bidirectional": true
+        },
+        "inter_attention": {
+            "type": "dot_product"
+        },
+        "output_feedforward": {
+            "input_dim": 800,
+            "num_layers": 1,
+            "hidden_dims": 2,
+            "activations": "linear"
+        },
+        "initializer": [
+            [
+                ".*linear_layers.*weight",
+                {
+                    "type": "xavier_normal"
+                }
+            ],
+            [
+                ".*token_embedder_tokens._projection.*weight",
+                {
+                    "type": "xavier_normal"
+                }
+            ]
+        ]
+    },
+    "iterator": {
+        "type": "bucket",
+        "sorting_keys": [
+            [
+                "premise",
+                "num_tokens"
+            ],
+            [
+                "hypothesis",
+                "num_tokens"
+            ]
+        ],
+        "batch_size": 40
+    },
+    "trainer": {
+        "num_epochs": 140,
+        "patience": 20,
+        "cuda_device": -1,
+        "grad_clipping": 5.0,
+        "validation_metric": "+accuracy",
+        "optimizer": {
+            "type": "adam",
+            "lr": 0.001
+        }
+    }
+}

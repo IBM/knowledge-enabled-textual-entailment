@@ -1,0 +1,140 @@
+{
+    "dataset_reader": {
+        "type": "scitail_graph",
+        "token_indexers": {
+            "tokens": {
+                "type": "single_id",
+                "lowercase_tokens": true
+            }
+        },
+        "tokenizer": {
+            "start_tokens": [
+                "<START>"
+            ],
+            "end_tokens": [
+                "<END>"
+            ]
+        },
+        "entities_tokenizer": {
+            "word_splitter": {
+                "type": "entities_splitter"
+            }
+        }
+    },
+    "train_data_path": "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed_twohop/entities/scitail_1.0_train.tsv",
+    "validation_data_path": "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed_twohop/entities/scitail_1.0_dev.tsv",
+    "model": {
+        "type": "graph_and_text",
+        "text_model": {
+            "type": "match_lstm",
+            "text_field_embedder": {
+                "tokens": {
+                    "type": "embedding",
+                    "pretrained_file": "./data/embeddings/glove/glove.840B.300d.txt.gz",
+                    "embedding_dim": 300,
+                    "trainable": false
+                }
+            },
+            "encoder": {
+                "type": "gru",
+                "input_size": 300,
+                "hidden_size": 300,
+                "num_layers": 1,
+                "bidirectional": true
+            },
+            "inter_attention": {
+                "type": "dot_product"
+            },
+            "initializer": [
+                [
+                    ".*linear_layers.*weight",
+                    {
+                        "type": "xavier_normal"
+                    }
+                ],
+                [
+                    ".*token_embedder_tokens._projection.*weight",
+                    {
+                        "type": "xavier_normal"
+                    }
+                ]
+            ]
+        },
+        "graph_model": {
+            "type": "simple_graph",
+            "entities_embedder": {
+                "tokens": {
+                    "type": "embedding",
+                    "projection_dim": 100,
+                    "pretrained_file": "./data/embeddings/conceptnet/transh.txt.gz",
+                    "embedding_dim": 300,
+                    "trainable": true
+                }
+            },
+            "inter_attention": {
+                "type": "dot_product"
+            },
+            "project_feedforward": {
+                "input_dim": 400,
+                "num_layers": 2,
+                "hidden_dims": 100,
+                "activations": "relu",
+                "dropout": 0.2
+            },
+            "initializer": [
+                [
+                    ".*linear_layers.*weight",
+                    {
+                        "type": "xavier_normal"
+                    }
+                ],
+                [
+                    ".*token_embedder_tokens._projection.*weight",
+                    {
+                        "type": "xavier_normal"
+                    }
+                ]
+            ]
+        },
+        "classify_feed_forward": {
+            "input_dim": 2800,
+            "num_layers": 1,
+            "hidden_dims": 2,
+            "activations": "linear",
+            "dropout": 0.0
+        }
+    },
+    "iterator": {
+        "type": "bucket",
+        "sorting_keys": [
+            [
+                "premise",
+                "num_tokens"
+            ],
+            [
+                "hypothesis",
+                "num_tokens"
+            ],
+            [
+                "premise_entities",
+                "num_tokens"
+            ],
+            [
+                "hypothesis_entities",
+                "num_tokens"
+            ]
+        ],
+        "batch_size": 40
+    },
+    "trainer": {
+        "num_epochs": 140,
+        "patience": 20,
+        "cuda_device": -1,
+        "grad_clipping": 5.0,
+        "validation_metric": "+accuracy",
+        "optimizer": {
+            "type": "adam",
+            "lr": 0.001
+        }
+    }
+}
