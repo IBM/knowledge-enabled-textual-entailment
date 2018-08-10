@@ -1,0 +1,75 @@
+{
+  "dataset_reader": {
+    "type": "scitail_graph",
+    "token_indexers": {
+      "tokens": {
+        "type": "single_id",
+        "lowercase_tokens": true
+      }
+    },
+    "tokenizer": {
+      "end_tokens": ["@@NULL@@"]
+    }
+  },
+  "train_data_path":
+    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_train_conceptnet_entities.tsv",
+  "validation_data_path":
+    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_dev_conceptnet_entities.tsv",
+  "model": {
+    "type": "decompattn",
+    "text_field_embedder": {
+      "tokens": {
+        "type": "embedding",
+        "projection_dim": 200,
+        "pretrained_file": "../datasets/glove.6B.300d.txt.gz",
+        "embedding_dim": 300,
+        "trainable": false
+      }
+    },
+    "attend_feedforward": {
+      "input_dim": 200,
+      "num_layers": 2,
+      "hidden_dims": 200,
+      "activations": "relu",
+      "dropout": 0.2
+    },
+    "similarity_function": { "type": "dot_product" },
+    "compare_feedforward": {
+      "input_dim": 400,
+      "num_layers": 2,
+      "hidden_dims": 200,
+      "activations": "relu",
+      "dropout": 0.2
+    },
+    "aggregate_feedforward": {
+      "input_dim": 400,
+      "num_layers": 2,
+      "hidden_dims": [200, 2],
+      "activations": ["relu", "linear"],
+      "dropout": [0.2, 0.0]
+    },
+    "initializer": [
+      [".*linear_layers.*weight", { "type": "xavier_normal" }],
+      [
+        ".*token_embedder_tokens._projection.*weight",
+        { "type": "xavier_normal" }
+      ]
+    ]
+  },
+  "iterator": {
+    "type": "bucket",
+    "sorting_keys": [["premise", "num_tokens"], ["hypothesis", "num_tokens"]],
+    "batch_size": 64
+  },
+
+  "trainer": {
+    "num_epochs": 140,
+    "patience": 20,
+    "cuda_device": -1,
+    "grad_clipping": 5.0,
+    "validation_metric": "+accuracy",
+    "optimizer": {
+      "type": "adagrad"
+    }
+  }
+}

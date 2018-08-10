@@ -1,0 +1,76 @@
+{
+  "dataset_reader": {
+    "type": "scitail_graph",
+    "token_indexers": {
+      "tokens": {
+        "type": "single_id",
+        "lowercase_tokens": true
+      }
+    },
+    "entities_tokenizer": {
+      "word_splitter": {
+        "type": "entities_splitter"
+      }
+    }
+  },
+  // relative to project root
+  "train_data_path":
+    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_train_conceptnet_entities.tsv",
+  "validation_data_path":
+    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_dev_conceptnet_entities.tsv",
+  "model": {
+    "type": "simple_graph",
+    "entities_embedder": {
+      "tokens": {
+        "type": "embedding",
+        "projection_dim": 200,
+        "pretrained_file": "../datasets/conceptnet/transh.txt.gz",
+        "embedding_dim": 300,
+        "trainable": false
+      }
+    },
+    "inter_attention": {
+      "type": "dot_product"
+    },
+    "project_feedforward": {
+      "input_dim": 800,
+      "num_layers": 2,
+      "hidden_dims": 200,
+      "activations": "relu",
+      "dropout": 0.2
+    },
+    "aggregate_feedforward": {
+      "input_dim": 800,
+      "num_layers": 2,
+      "hidden_dims": [200, 2],
+      "activations": ["relu", "linear"],
+      "dropout": [0.2, 0.0]
+    },
+    "initializer": [
+      [".*linear_layers.*weight", { "type": "xavier_normal" }],
+      [
+        ".*token_embedder_tokens._projection.*weight",
+        { "type": "xavier_normal" }
+      ]
+    ]
+  },
+  "iterator": {
+    "type": "bucket",
+    "sorting_keys": [
+      ["premise_entities", "num_tokens"],
+      ["hypothesis_entities", "num_tokens"]
+    ],
+    "batch_size": 64
+  },
+
+  "trainer": {
+    "num_epochs": 140,
+    "patience": 20,
+    "cuda_device": -1,
+    "grad_clipping": 5.0,
+    "validation_metric": "+accuracy",
+    "optimizer": {
+      "type": "adagrad"
+    }
+  }
+}
