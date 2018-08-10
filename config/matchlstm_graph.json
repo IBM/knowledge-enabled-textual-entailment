@@ -18,9 +18,9 @@
     }
   },
   "train_data_path":
-    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_train_conceptnet_entities.tsv",
+    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed/triples/parsed/scitail_1.0_train_conceptnet_triples.tsv",
   "validation_data_path":
-    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_dev_conceptnet_entities.tsv",
+    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed/triples/parsed/scitail_1.0_dev_conceptnet_triples.tsv",
   "model": {
     "type": "graph_and_text",
     "text_model": {
@@ -28,21 +28,21 @@
       "text_field_embedder": {
         "tokens": {
           "type": "embedding",
-          "pretrained_file": "../datasets/glove.6B.100d.txt.gz",
-          "embedding_dim": 100,
+          "pretrained_file": "./data/embeddings/glove/glove.840B.300d.txt.gz",
+          "embedding_dim": 300,
           "trainable": false
         }
       },
       "encoder": {
         "type": "gru",
-        "input_size": 100,
-        "hidden_size": 100,
+        "input_size": 300,
+        "hidden_size": 300,
         "num_layers": 1,
         "bidirectional": true
       },
       "inter_attention": { "type": "dot_product" },
       "output_feedforward": {
-        "input_dim": 800,
+        "input_dim": 2400,
         "num_layers": 1,
         "hidden_dims": 2,
         "activations": "linear"

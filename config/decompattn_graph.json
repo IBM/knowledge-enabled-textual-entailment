@@ -29,7 +29,7 @@
         "tokens": {
           "type": "embedding",
           "projection_dim": 200,
-          "pretrained_file": "../datasets/glove.6B.300d.txt.gz",
+          "pretrained_file": "./data/embeddings/glove/glove.840B.300d.txt.gz",
           "embedding_dim": 300,
           "trainable": false
         }
@@ -70,7 +70,7 @@
         "tokens": {
           "type": "embedding",
           "projection_dim": 200,
-          "pretrained_file": "../datasets/conceptnet/transh.txt.gz",
+          "pretrained_file": "./data/embeddings/conceptnet/transh.txt.gz",
           "embedding_dim": 300,
           "trainable": false
         }

@@ -15,16 +15,16 @@
   },
   // relative to project root
   "train_data_path":
-    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_train_conceptnet_entities.tsv",
+    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed/triples/parsed/scitail_1.0_train_conceptnet_triples.tsv",
   "validation_data_path":
-    "../CSNLI/data/nli_datasets/scitail/conceptnet_entities/parsed/scitail_1.0_dev_conceptnet_entities.tsv",
+    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed/triples/parsed/scitail_1.0_dev_conceptnet_triples.tsv",
   "model": {
     "type": "simple_graph",
     "entities_embedder": {
       "tokens": {
         "type": "embedding",
         "projection_dim": 200,
-        "pretrained_file": "../datasets/conceptnet/transh.txt.gz",
+        "pretrained_file": "./data/embeddings/conceptnet/transh.txt.gz",
         "embedding_dim": 300,
         "trainable": false
       }
