@@ -1,6 +1,5 @@
 # ConceptNet-PPMI Embeddings can be downloaded here: https://conceptnet.s3.amazonaws.com/precomputed-data/2016/numberbatch/16.09/conceptnet-55-ppmi.h5
 
-import os
 from pathlib import Path
 import pandas as pd
 # manually install tahbles via `pip install tables` if python complains
@@ -8,7 +7,7 @@ import pandas as pd
 # `HDFStore requires PyTables, "No module named 'tables'" problem importing`
 
 # get file path
-DATASET_DIR = Path(os.path.dirname(__file__)) / '../data/embeddings/conceptnet'
+DATASET_DIR = Path(__file__).parent / '../data/embeddings/conceptnet'
 FILE_PATH = DATASET_DIR / 'conceptnet-55-ppmi.h5'
 
 data = pd.read_hdf(FILE_PATH)
