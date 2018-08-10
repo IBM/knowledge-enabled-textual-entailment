@@ -88,3 +88,12 @@ class GraphAndTextModel(Model):
                    graph_model=graph_model,
                    initializer=initializer,
                    regularizer=regularizer)
+
+    def decode(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+        # add label to output
+        argmax_indices = output_dict['label_probs'].max(dim=-1)[1].data.numpy()
+        output_dict['label'] = [self.vocab.get_token_from_index(x, namespace="labels")
+                                for x in argmax_indices]
+        # do not show last hidden layer
+        del output_dict["final_hidden"]
+        return output_dict

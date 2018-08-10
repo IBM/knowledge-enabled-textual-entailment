@@ -50,11 +50,12 @@ class ScitailGraphDatasetReader(DatasetReader):
     @overrides
     def text_to_instance(self, premise: str, premise_entities: str,
                          hypothesis: str, hypothesis_entities: str,
-                         label: str) -> Instance:
+                         label: str = None) -> Instance:
 
-        label = LabelField(label)
+        fields = {}
 
-        fields = {'label': label}
+        if label:
+            fields['label'] = LabelField(label)
 
         if self._tokenizer:
             premise = self._tokenizer.tokenize(premise)

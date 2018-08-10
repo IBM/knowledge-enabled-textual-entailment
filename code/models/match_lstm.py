@@ -95,7 +95,7 @@ class MatchLSTM(Model):
         inter_attention = MatrixAttention.from_params(
             params.pop("inter_attention"))
 
-        output_feedforward_params = params.pop('output_feedforward')
+        output_feedforward_params = params.pop('output_feedforward', None)
         output_feedforward = FeedForward.from_params(
             output_feedforward_params) if output_feedforward_params else None
 
@@ -112,3 +112,12 @@ class MatchLSTM(Model):
                    output_feedforward=output_feedforward,
                    initializer=initializer,
                    regularizer=regularizer)
+
+    def decode(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+        # add label to output
+        argmax_indices = output_dict['label_probs'].max(dim=-1)[1].data.numpy()
+        output_dict['label'] = [self.vocab.get_token_from_index(x, namespace="labels")
+                                for x in argmax_indices]
+        # do not show last hidden layer
+        del output_dict["final_hidden"]
+        return output_dict
