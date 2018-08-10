@@ -95,5 +95,4 @@ class GraphAndTextModel(Model):
         output_dict['label'] = [self.vocab.get_token_from_index(x, namespace="labels")
                                 for x in argmax_indices]
         # do not show last hidden layer
-        del output_dict["final_hidden"]
         return output_dict

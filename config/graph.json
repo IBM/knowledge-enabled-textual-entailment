@@ -15,32 +15,32 @@
   },
   // relative to project root
   "train_data_path":
-    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed/triples/parsed/scitail_1.0_train_conceptnet_triples.tsv",
+    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed_twohop/entities/scitail_1.0_train.tsv",
   "validation_data_path":
-    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed/triples/parsed/scitail_1.0_dev_conceptnet_triples.tsv",
+    "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed_twohop/entities/scitail_1.0_dev.tsv",
   "model": {
     "type": "simple_graph",
     "entities_embedder": {
       "tokens": {
         "type": "embedding",
-        "projection_dim": 200,
+	"projection_dim": 100,
         "pretrained_file": "./data/embeddings/conceptnet/transh.txt.gz",
         "embedding_dim": 300,
-        "trainable": false
+        "trainable": true
       }
     },
     "inter_attention": {
       "type": "dot_product"
     },
     "project_feedforward": {
-      "input_dim": 800,
+      "input_dim": 400,
       "num_layers": 2,
-      "hidden_dims": 200,
+      "hidden_dims": 100,
       "activations": "relu",
       "dropout": 0.2
     },
     "aggregate_feedforward": {
-      "input_dim": 800,
+      "input_dim": 400,
       "num_layers": 2,
       "hidden_dims": [200, 2],
       "activations": ["relu", "linear"],
@@ -70,7 +70,9 @@
     "grad_clipping": 5.0,
     "validation_metric": "+accuracy",
     "optimizer": {
-      "type": "adagrad"
+      "type": "adam",
+      "lr": 0.001
     }
   }
 }
+

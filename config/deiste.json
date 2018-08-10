@@ -7,6 +7,7 @@
         "lowercase_tokens": true
       }
     },
+    "max_length": 100,
     "tokenizer": {
       "start_tokens": ["<START>"],
       "end_tokens": ["<END>"]
@@ -17,25 +18,40 @@
   "validation_data_path":
     "./data/nli_datasets/SciTailV1/tsv_format/conceptnet_processed/triples/parsed/scitail_1.0_dev_conceptnet_triples.tsv",
   "model": {
-    "type": "match_lstm",
+    "type": "deiste",
     "text_field_embedder": {
       "tokens": {
         "type": "embedding",
         "pretrained_file": "./data/embeddings/glove/glove.840B.300d.txt.gz",
         "embedding_dim": 300,
-        "trainable": false
+        "trainable": true
       }
     },
-    "encoder": {
-      "type": "gru",
-      "input_size": 300,
-      "hidden_size": 300,
-      "num_layers": 1,
-      "bidirectional": true
+    "inter_attention": { "type": "cosine" },
+    "param_dyn_encoder": {
+      "type": "cnn",
+      "embedding_dim": 300,
+      "num_filters": 1,
+      "ngram_filter_sizes": [3],
+      "conv_layer_activation": "tanh",
+      "output_dim": 300,
     },
-    "inter_attention": { "type": "dot_product" },
+    "pos_embedder": {
+      "type": "embedding",
+      "num_embeddings": 100,
+      "embedding_dim": 50,
+      "trainable": true,
+    },
+    "pos_attn_encoder": {
+      "type": "cnn",
+      "embedding_dim": 650,
+      "num_filters": 1,
+      "ngram_filter_sizes": [3],
+      "conv_layer_activation": "tanh",
+      "output_dim": 300,
+    },
     "output_feedforward": {
-      "input_dim": 2400,
+      "input_dim": 1200,
       "num_layers": 1,
       "hidden_dims": 2,
       "activations": "linear"
@@ -51,7 +67,7 @@
   "iterator": {
     "type": "bucket",
     "sorting_keys": [["premise", "num_tokens"], ["hypothesis", "num_tokens"]],
-    "batch_size": 128
+    "batch_size": 50
   },
 
   "trainer": {

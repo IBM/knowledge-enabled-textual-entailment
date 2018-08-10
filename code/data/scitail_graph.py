@@ -20,6 +20,7 @@ class ScitailGraphDatasetReader(DatasetReader):
     def __init__(self,
                  lazy: bool = False,
                  tokenizer: Tokenizer = None,
+                 max_length: int=None,
                  token_indexers: Dict[str, TokenIndexer] = None,
                  entities_tokenizer: Tokenizer = None,
                  entities_indexers: Dict[str, TokenIndexer] = None) -> None:
@@ -30,6 +31,7 @@ class ScitailGraphDatasetReader(DatasetReader):
         self._entities_tokenizer = entities_tokenizer
         self._entities_indexers = entities_indexers or {
             "tokens": SingleIdTokenIndexer()}
+        self._max_length = max_length
 
     @overrides
     def _read(self, file_path):
@@ -61,6 +63,10 @@ class ScitailGraphDatasetReader(DatasetReader):
             premise = self._tokenizer.tokenize(premise)
             hypothesis = self._tokenizer.tokenize(hypothesis)
 
+            if self._max_length:
+                premise = premise[:self._max_length]
+                hypothesis = hypothesis[:self._max_length]
+
             fields["premise"] = TextField(premise, self._token_indexers)
             fields["hypothesis"] = TextField(hypothesis, self._token_indexers)
 
@@ -83,6 +89,8 @@ class ScitailGraphDatasetReader(DatasetReader):
         tokenizer_params = params.pop('tokenizer', None)
         entities_tokenizer_params = params.pop('entities_tokenizer', None)
 
+        max_length = params.pop("max_length", None)
+
         if not tokenizer_params and not entities_tokenizer_params:
             raise ConfigurationError(
                 "Please specify at least one of tokenizer and entities_tokenizer")
@@ -101,6 +109,7 @@ class ScitailGraphDatasetReader(DatasetReader):
 
         return cls(lazy=lazy, tokenizer=tokenizer,
                    token_indexers=token_indexers,
+                   max_length=max_length,
                    entities_tokenizer=entities_tokenizer,
                    entities_indexers=entities_indexers)
 
