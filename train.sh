@@ -15,3 +15,6 @@ allennlp train config/decompattn_graph.json -s res/decompattn_graph --include-pa
 
 # Training MatchLSTM with Graph
 allennlp train config/matchlstm_graph.json -s res/matchlstm_graph --include-package code --file-friendly-logging
+
+# Training HBMP
+allennlp train config/hbmp.json -s res/hbmp --include-package code --file-friendly-logging
