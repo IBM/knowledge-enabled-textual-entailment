@@ -134,8 +134,8 @@ def run():
     tuples_directory = csv_to_tuples(csv_path)
 
     config = Config()
-    #config.set_in_path(f'{tuples_directory}/')
-    config.set_in_path(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/kg-embeddings/OpenKE/benchmarks/FB15K/')
+    config.set_in_path(f'{tuples_directory}/')
+    #config.set_in_path(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/kg-embeddings/OpenKE/benchmarks/FB15K/')
     print(tuples_directory)
     config.set_log_on(1)  # set to 1 to print the loss
 
