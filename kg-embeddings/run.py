@@ -134,11 +134,13 @@ def run():
     tuples_directory = csv_to_tuples(csv_path)
 
     config = Config()
-    config.set_in_path(f'{tuples_directory}/')
+    #config.set_in_path(f'{tuples_directory}/')
+    config.set_in_path(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/kg-embeddings/OpenKE/benchmarks/FB15K/')
+    print(tuples_directory)
     config.set_log_on(1)  # set to 1 to print the loss
 
     config.set_work_threads(8)
-    config.set_train_times(10000)  # number of iterations
+    config.set_train_times(500)  # number of iterations
     config.set_nbatches(300)  # batch size
     config.set_alpha(0.001)  # learning rate
 
@@ -149,20 +151,22 @@ def run():
     config.set_rel_neg_rate(0)
     config.set_opt_method("SGD")
 
-    # Save the graph embedding every {number} iterations
-    config.set_export_steps(50)
-
+    
     OUTPUT_PATH = APP_ROOT / "../data/embeddings/conceptnet/"
     if not OUTPUT_PATH.exists():
         OUTPUT_PATH.mkdir()
 
+    OUTPUT_PATH = str(OUTPUT_PATH)
     # Model parameters will be exported via torch.save() automatically.
-    config.set_export_files(OUTPUT_PATH / "transh.pt")
+    config.set_export_files(OUTPUT_PATH + "/transh.pt")
     # Model parameters will be exported to json files automatically.
     # (Might cause IOError if the file is too large)
-    config.set_out_files(OUTPUT_PATH / "transh_embedding.vec.json")
+    config.set_out_files(OUTPUT_PATH + "/transh_embedding.vec.json")
 
     config.init()
+    # Save the graph embedding every {number} iterations
+    config.set_export_steps(20)
+
     config.set_model(models.TransH)
 
     logger.info("Begin training with {}".format(config.__dict__))
