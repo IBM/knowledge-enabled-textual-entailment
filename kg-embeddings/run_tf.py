@@ -137,7 +137,7 @@ def run():
     config.set_in_path(f'{tuples_directory}/')
     #config.set_in_path(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/kg-embeddings/OpenKE/benchmarks/FB15K/')
     print(tuples_directory)
-    #config.set_log_on(1)  # set to 1 to print the loss
+    config.set_log_on(1)  # set to 1 to print the loss
 
     config.set_work_threads(8)
     config.set_train_times(5)  # number of iterations
@@ -158,20 +158,20 @@ def run():
 
     OUTPUT_PATH = str(OUTPUT_PATH)
     # Model parameters will be exported via torch.save() automatically.
-    config.set_checkpoint_dir(OUTPUT_PATH)
+    config.set_export_files(OUTPUT_PATH + "/transh.pt")
     # Model parameters will be exported to json files automatically.
     # (Might cause IOError if the file is too large)
-    config.set_result_dir(OUTPUT_PATH)
+    config.set_out_files(OUTPUT_PATH + "/transh_embedding.vec.json")
 
     config.init()
     # Save the graph embedding every {number} iterations
-    config.set_save_steps(20)
+    config.set_export_steps(20)
 
-    config.set_train_model(models.TransH)
+    config.set_model(models.TransH)
 
     logger.info("Begin training with {}".format(config.__dict__))
 
-    config.train()
+    config.run()
 
 
 if __name__ == "__main__":
