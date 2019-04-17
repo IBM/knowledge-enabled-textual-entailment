@@ -1,3 +1,5 @@
+# Convert TransH from binary weights to Word2Vec format
+
 """
 Train a knowledge graph embedding for concepnet
 """
@@ -8,6 +10,7 @@ import logging
 from pathlib import Path
 import gzip
 from tqdm import tqdm
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(name)s -"
                     " %(levelname)s: %(message)s")
@@ -136,12 +139,12 @@ def run():
     config = Config()
     config.set_in_path(f'{tuples_directory}/')
     #config.set_in_path(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/kg-embeddings/OpenKE/benchmarks/FB15K/')
-    #print(tuples_directory)
+    print(tuples_directory)
     config.set_log_on(1)  # set to 1 to print the loss
 
     config.set_work_threads(8)
-    config.set_train_times(10)  # number of iterations
-    config.set_nbatches(300)  # batch size
+    config.set_train_times(5)  # number of iterations
+    config.set_nbatches(3)  # batch size
     config.set_alpha(0.001)  # learning rate
 
     config.set_bern(0)
@@ -172,8 +175,42 @@ def run():
 
     logger.info("Begin training with {}".format(config.__dict__))
 
-    config.run()
+    config.set_import_files(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/data/embeddings/conceptnet/transh.pt.meta')
+    saved_model = config.restore_tensorflow()
+    embed = config.get_parameters_by_name('ent_embeddings')
+    print('Parameters restored....')
+    print(embed)
+    with open("/Users/ashishnagar/code/knowledge-enabled-textual-entailment/data/conceptnet/entity2id.txt") as f:
+        next(f)  # skip header
+        entity2id = [word_pair.strip().split()[0] for word_pair in f.readlines()]
+    
+    print('Dataframe start')
+    out = pd.DataFrame(embed, index=entity2id)
+    print('Dataframe end')
+    # save the processed file
+    print('Save to file...')
+    out.to_csv(path_or_buf='/Users/ashishnagar/code/knowledge-enabled-textual-entailment/data/embeddings/transh.txt.gz', sep=' ',
+            header=False, compression="gzip")
 
+    print('File saved...')
 
 if __name__ == "__main__":
     run()
+
+
+'''
+transh = torch.load(FILE_PATH, map_location='cpu')
+
+with open(Path(__file__).parent / "../data/conceptnet/entity2id.txt") as f:
+    next(f)  # skip header
+    entity2id = [word_pair.strip().split()[0] for word_pair in f.readlines()]
+
+embed = transh.get("ent_embeddings.weight").numpy()
+# use pandas to insert index
+out = pd.DataFrame(embed, index=entity2id)
+
+# save the processed file
+out.to_csv(path_or_buf=DATASET_DIR / 'transh.txt.gz', sep=' ',
+           header=False, compression="gzip")
+
+'''

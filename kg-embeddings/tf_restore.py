@@ -136,12 +136,12 @@ def run():
     config = Config()
     config.set_in_path(f'{tuples_directory}/')
     #config.set_in_path(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/kg-embeddings/OpenKE/benchmarks/FB15K/')
-    #print(tuples_directory)
+    print(tuples_directory)
     config.set_log_on(1)  # set to 1 to print the loss
 
     config.set_work_threads(8)
-    config.set_train_times(10)  # number of iterations
-    config.set_nbatches(300)  # batch size
+    config.set_train_times(1)  # number of iterations
+    config.set_nbatches(2)  # batch size
     config.set_alpha(0.001)  # learning rate
 
     config.set_bern(0)
@@ -166,14 +166,15 @@ def run():
 
     config.init()
     # Save the graph embedding every {number} iterations
-    config.set_export_steps(2)
+    config.set_export_steps(1)
 
     config.set_model(models.TransH)
 
     logger.info("Begin training with {}".format(config.__dict__))
 
-    config.run()
-
+    config.set_import_files(r'/Users/ashishnagar/code/knowledge-enabled-textual-entailment/data/embeddings/conceptnet/transh.pt.meta')
+    saved_model = config.restore_tensorflow()
+    print(config.get_parameters_by_name('ent_embeddings'))
 
 if __name__ == "__main__":
     run()
