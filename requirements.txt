@@ -77,5 +77,5 @@ typing==3.6.6
 ujson==1.35
 Unidecode==1.0.22
 urllib3==1.23
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 wrapt==1.10.11
