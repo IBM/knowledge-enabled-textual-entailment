@@ -49,7 +49,7 @@ psycopg2==2.7.5
 py==1.7.0
 pyasn1==0.4.4
 pycparser==2.19
-Pygments==2.2.0
+Pygments==2.7.4
 pyhocon==0.3.35
 pyparsing==2.2.2
 pytest==3.8.2
