@@ -76,6 +76,6 @@ tqdm==4.27.0
 typing==3.6.6
 ujson==1.35
 Unidecode==1.0.22
-urllib3==1.23
+urllib3==1.26.5
 Werkzeug==0.14.1
 wrapt==1.10.11
