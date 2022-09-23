@@ -44,7 +44,7 @@ parsimonious==0.8.0
 plac==0.9.6
 pluggy==0.7.1
 preshed==2.0.1
-protobuf==3.6.1
+protobuf==3.18.3
 psycopg2==2.7.5
 py==1.7.0
 pyasn1==0.4.4
